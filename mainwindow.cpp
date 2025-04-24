@@ -9,11 +9,13 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    pcsSubscriber.isSubscriptionActive=false ;
-    pcsSubscriber.start();
-    pcsSubscriber.newSubscribeRequest();
+    //    pcsSubscriber.isSubscriptionActive=false ;
+
+    //   pcsSubscriber.newSubscribeRequest();
 
     allConnects();
+    pcsSubscriber.ignoreSubscribeError=true;
+    pcsSubscriber.start();
 }
 
 MainWindow::~MainWindow()
@@ -27,14 +29,15 @@ void MainWindow::allConnects()
     qDebug() <<  Q_FUNC_INFO;
 
     connect(&pcsSubscriber, &IbisIpSubscriber::signalDataReceived  ,this, &MainWindow::slotDataReceived);
-    connect(&pcsSubscriber, &IbisIpSubscriberOnePublisher::signalSubscriptionSuccessful,this, &MainWindow::slotSubscribed);
-    connect(&pcsSubscriber, &IbisIpSubscriberOnePublisher::signalError,this, &MainWindow::slotResponseReceived);
+    //    connect(&pcsSubscriber, &IbisIpSubscriber::signalSubscriptionSuccessful,this, &MainWindow::slotSubscribed);
+    connect(&pcsSubscriber, &IbisIpSubscriber::signalError,this, &MainWindow::slotResponseReceived);
     //   connect(&pcsSubscriber, &PcsSubscriber::signal ,this, &MainWindow::slotResponseReceived);
 }
 
 
 void MainWindow::slotDataReceived(QString data)
 {
+    qDebug()<<Q_FUNC_INFO;
     ui->plainTextEdit_receivedData->setPlainText(data);
 
     int inCount=0;
@@ -61,18 +64,71 @@ void MainWindow::slotSubscribed(QZeroConfService zcs)
 
 void MainWindow::on_pushButton_startCounting_clicked()
 {
-    pcsSubscriber.startCounting(1);
+
+    if(!pcsSubscriber.pcsPublisherList.isEmpty())
+    {
+        pcsSubscriber.startCounting(pcsSubscriber.pcsPublisherList.first());
+    }
 }
 
 
 void MainWindow::on_pushButton_stopCounting_clicked()
 {
+    if(!pcsSubscriber.pcsPublisherList.isEmpty())
+    {
+        pcsSubscriber.stopCounting(pcsSubscriber.pcsPublisherList.first());
+    }
 
 }
 
 
 void MainWindow::on_pushButton_unsubscribe_clicked()
 {
-    pcsSubscriber.unsubscribe();
+    if(!pcsSubscriber.pcsPublisherList.isEmpty())
+    {
+        pcsSubscriber.unsubscribe(pcsSubscriber.pcsPublisherList.first());
+    }
+
+}
+
+
+void MainWindow::on_pushButton_manualAddService_clicked()
+{
+    PcsPublisherStruct selectedPcsPublisher;
+    selectedPcsPublisher.hostAddress=QHostAddress(ui->lineEdit_serviceIp->text());
+    selectedPcsPublisher.portNumber=ui->lineEdit_servicePort->text().toInt();
+    selectedPcsPublisher.serviceName=ui->lineEdit_serviceName->text();
+    selectedPcsPublisher.ibisIpVersion= ui->lineEdit_serviceVersion->text();
+    selectedPcsPublisher.doorNumber=1;
+
+    pcsSubscriber.slotAddServiceManual(selectedPcsPublisher);
+}
+
+
+void MainWindow::on_pushButton_manualAddServiceForce_clicked()
+{
+    PcsPublisherStruct selectedPcsPublisher;
+    selectedPcsPublisher.hostAddress=QHostAddress(ui->lineEdit_serviceIp->text());
+    selectedPcsPublisher.portNumber=ui->lineEdit_servicePort->text().toInt();
+    selectedPcsPublisher.serviceName=ui->lineEdit_serviceName->text();
+    selectedPcsPublisher.ibisIpVersion= ui->lineEdit_serviceVersion->text();
+    selectedPcsPublisher.doorNumber=1;
+
+    pcsSubscriber.slotAddServiceManualForce(selectedPcsPublisher);
+}
+
+
+void MainWindow::on_pushButton_setData0_clicked()
+{
+    if(!pcsSubscriber.pcsPublisherList.isEmpty())
+    {
+        pcsSubscriber.setCountersZero(pcsSubscriber.pcsPublisherList.first());
+    }
+}
+
+
+void MainWindow::on_pushButton_purgeSubscribers_clicked()
+{
+    pcsSubscriber.pcsPublisherList.clear();
 }
 

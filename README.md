@@ -4,5 +4,9 @@ Program to read count numbers from Iris Irma 6 sensor using IBIS-IP protocol (VD
 
 
 ## Changelog 
+- 20250424
+    - base of ITXPTsubscriber
+    - moved subscriber classes to VDV301subscriber submodule
+    - first functional implementation of multiple publisher subscriber
 - 20250331_1929
     - initial commit

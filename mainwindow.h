@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 
-#include "pcssubscriber.h"
-#include "xmlparserpcs.h"
+#include "VDV301subscriber/pcssubscriber.h"
+#include "VDV301subscriber/xmlparserpcs.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -31,6 +31,14 @@ private slots:
     void slotSubscribed(QZeroConfService zcs);
     void on_pushButton_unsubscribe_clicked();
 
+    void on_pushButton_manualAddService_clicked();
+
+    void on_pushButton_manualAddServiceForce_clicked();
+
+    void on_pushButton_setData0_clicked();
+
+    void on_pushButton_purgeSubscribers_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -38,6 +46,9 @@ private:
     void allConnects();
 
     XmlParserPcs xmlParserPcs;
+
+
+//    PcsPublisherStruct selectedPcsPublisher;
 
 };
 #endif // MAINWINDOW_H
