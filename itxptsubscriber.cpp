@@ -49,6 +49,7 @@ void ITXPTsubscriber::slotAddService(QZeroConfService zcs)
                 }*/
 
                 deviceAddress=selectNonLoopbackAddressInSubnet(zcs->ip(),mSubnetMask);
+
                 postSubscribe(subscriptionDestination,xmlGeneratorSubscriber.createSubscribeRequest(deviceAddress,httpServerSubscriber.portNumber()));
 
             }
@@ -160,8 +161,10 @@ void ITXPTsubscriber::postSubscribe(QUrl subscriberAddress, QString postRequestC
 
     QByteArray postRequestContentQByteArray=postRequestContent.toUtf8() ;
 
-    reply=postManager.post(postRequest,postRequestContentQByteArray);
-    connect(reply, &QNetworkReply::finished, this, &ITXPTsubscriber::slotHttpRequestSubscriptionFinished);
+    QNetworkReply *reply=postManager.post(postRequest,postRequestContentQByteArray);
+   // connect(reply, &QNetworkReply::finished, this, &ITXPTsubscriber::slotHttpRequestSubscriptionFinished);
+
+    connect(reply, &QNetworkReply::finished, this, &ITXPTsubscriber::slotHttpRequestFinished);
 
 }
 
@@ -184,7 +187,8 @@ void ITXPTsubscriber::postUnsubscribe(QUrl subscriberAddress, QString postReques
 
     QByteArray postRequestContentQByteArray=postRequestContent.toUtf8() ;
 
-    reply=postManager.post(postRequest,postRequestContentQByteArray);
-    connect(reply, &QNetworkReply::finished, this, &ITXPTsubscriber::slotHttpRequestUnsubscriptionFinished);
+    QNetworkReply *reply=postManager.post(postRequest,postRequestContentQByteArray);
+    //connect(reply, &QNetworkReply::finished, this, &ITXPTsubscriber::slotHttpRequestUnsubscriptionFinished);
+    connect(reply, &QNetworkReply::finished, this, &ITXPTsubscriber::slotHttpRequestFinished);
 
 }

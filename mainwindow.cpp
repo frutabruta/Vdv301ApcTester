@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     allConnects();
     pcsSubscriber.ignoreSubscribeError=true;
+    pcsSubscriber.setSubnetMask(23);
     pcsSubscriber.start();
 }
 
